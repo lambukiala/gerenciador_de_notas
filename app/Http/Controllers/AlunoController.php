@@ -30,6 +30,10 @@ class AlunoController extends Controller
     public function store(Request $request)
     {
         //
+        $aluno = Aluno::find($request);
+            if(!$aluno){
+                return response()->json(['error' => ' não encontrado'], 404);
+            }
          $validated = $request->validate([
            'name' => 'required|string',
             'email' => 'required|email|unique:alunos',

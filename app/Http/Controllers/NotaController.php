@@ -32,8 +32,8 @@ class NotaController extends Controller
        
        
        $validated = $request->validate([
-           'aluno' => 'required|integer|exists:aluno,id',
-            'disciplina' => 'required|integer|exists:disciplinas,id',
+           'aluno_id' => 'required|integer|exists:alunos,id',
+            'disciplina_id' => 'required|integer|exists:disciplinas,id',
             'nota' => 'required|numeric|min:0|max:20', 
         ]);
          $nota = Nota::create($validated); 
