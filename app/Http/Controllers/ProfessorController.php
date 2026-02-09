@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Nota;
 use App\Models\Aluno;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\validated;
+use App\Models\professor;
+
 
 class ProfessorController extends Controller
 {
@@ -34,19 +34,14 @@ class ProfessorController extends Controller
     {
         //
         $validated = $request->validate([
-            'aluno_id' => 'required|integer|exists:alunos,id',
-            'disciplina_id' => 'required|integer|exists:disciplina,id',
-            'nota' => 'required|numeric',
+           'name' => 'required|string',
+            'email' => 'required|email|unique:alunos',
+            
         ]);
-        $nota = Nota::create([
-            'aluno_id' => $validated['aluno_id'],
-            'disciplina_id' => $validated['disciplina_id'],
-            'professor_id' => auth()->id(),
-            'nota' => $validated['nota'],
-
-        ]);
-
-        return response()->json($nota, 201);
+         $professor = Professor::create($validated); 
+            return response()->json(['message'=> 'Professor cadastrado com sucesso', 'data' => $professor],201);
+       
+       
     }
 
     /**
@@ -68,24 +63,34 @@ class ProfessorController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Nota $nota)
+    public function update(Request $request, $id)
     {
         //
-            $validated = $request->validate([
-                'nota' => 'required|numeric',
-            ]);
-            $nota->update($validated);
+           $professor = Professor::find($id);
+           if (!$professor) {
+            return response()->json(['error' => 'Professor não encontrado'], 404);
+           }
+             $validated = $request->validate([
+           'name' => 'required|string',
+            'email' => 'required|email|unique:alunos',
+            
+        ]);
+        $professor->update($validated);
+        return response()->json($professor, 200);
+
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Nota $nota)
+    public function destroy($id)
     {
         //
-            $aluno_id = $nota->aluno_id;
-            $nota->delete();
-
-            return response()->json(['msg' => 'Nota eliminada com sucesso', 200]);
+         $professor = Professor::find($id);
+         if (!$professor) {
+            return response()->json(['error'=> 'Professor não encontrado'], 404);
+         }
+         $professor->delete();
+         return response()->json(['message'=> 'Professor eliminado com sucesso'],200);
     }
 }

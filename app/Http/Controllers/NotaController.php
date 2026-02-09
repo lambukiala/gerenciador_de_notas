@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Nota;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\validated;
 class NotaController extends Controller
 {
     /**
@@ -34,12 +32,12 @@ class NotaController extends Controller
        
        
        $validated = $request->validate([
-           'aluno_id' => 'required|string',
-            'disciplina_id' => 'required|integer',
-            'nota' => 'required|numeric', 
+           'aluno' => 'required|integer|exists:aluno,id',
+            'disciplina' => 'required|integer|exists:disciplinas,id',
+            'nota' => 'required|numeric|min:0|max:20', 
         ]);
          $nota = Nota::create($validated); 
-            return response()->json($nota, 201);
+            return response()->json(['message'=> 'Nota cadastrada com sucesso', 'data' => $nota],201);
            
          
     }

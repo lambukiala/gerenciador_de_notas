@@ -10,10 +10,9 @@ class aluno extends Model
 {
     use HasFactory, SoftDeletes;
     protected $fillable = [
-        'nome',
+        'name',
         'email',
-        'disciplina',
-        'nota'
+        
         
     ];
     public function notas()

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Models\disciplina;
 class DisciplinaController extends Controller
 {
     /**
@@ -12,6 +12,7 @@ class DisciplinaController extends Controller
     public function index()
     {
         //
+       
     }
 
     /**
@@ -28,6 +29,14 @@ class DisciplinaController extends Controller
     public function store(Request $request)
     {
         //
+         $validated = $request->validate([
+           'name' => 'required|string',
+            'description' => 'nullable|string',
+            
+        ]);
+         $disciplina = Disciplina::create($validated); 
+            return response()->json(['message'=> 'Disciplina cadastrado com sucesso', 'data' => $disciplina],201);
+       
     }
 
     /**
@@ -49,9 +58,18 @@ class DisciplinaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
         //
+         $validated = $request->validate([
+           'name' => 'required|string',
+            'description' => 'nullable|string',
+            
+        ]);
+        $disciplina = Disciplina::findOrFail($id);
+        $disciplina->update($validated);
+
+        return response()->json(['message' => 'Disciplina atualizada com sucesso', 'data' => $disciplina], 200);
     }
 
     /**
@@ -60,5 +78,8 @@ class DisciplinaController extends Controller
     public function destroy(string $id)
     {
         //
+        $disciplina = Disciplina::findOrFail($id);
+        $disciplina->delete();
+        return response()->json(['message' => 'Disciplina eliminada com sucesso'], 200);
     }
 }

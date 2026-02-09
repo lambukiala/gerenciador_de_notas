@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Aluno;
 
 class AlunoController extends Controller
 {
@@ -12,6 +13,7 @@ class AlunoController extends Controller
     public function index()
     {
         //
+         return response()->json(Aluno::all());
     }
 
     /**
@@ -28,6 +30,14 @@ class AlunoController extends Controller
     public function store(Request $request)
     {
         //
+         $validated = $request->validate([
+           'name' => 'required|string',
+            'email' => 'required|email|unique:alunos',
+            
+        ]);
+         $aluno = Aluno::create($validated); 
+            return response()->json(['message'=> 'Aluno cadastrado com sucesso', 'data' => $aluno],201);
+           
     }
 
     /**
@@ -49,16 +59,37 @@ class AlunoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request,  $id)
     {
         //
+            $aluno = Aluno::find($id);
+            if(!$aluno){
+                return response()->json(['error' => 'Aluno não encontrado'], 404);
+            }
+
+                 $validated = $request->validate([
+           'name' => 'required|string',
+            'email' => 'required|email|unique:alunos',
+            
+        ]);
+        $aluno->update($validated);
+        return response()->json($aluno, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
         //
+        $aluno = Aluno::find($id);
+        if (!$aluno) {
+
+
+            return response()->json(['error' => 'Aluno não encontrado'], 404);
+
+        }
+        $aluno->delete();
+        return response()->json(['message'=> 'Aluno eliminado com sucesso'], 200);
     }
 }
